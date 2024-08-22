@@ -1,0 +1,43 @@
+import { addEnsContracts } from "@ensdomains/ensjs";
+import {
+  MAINNET_RELAY_API,
+  TESTNET_RELAY_API,
+  convertViemChainToRelayChain,
+  createClient,
+} from "@reservoir0x/relay-sdk";
+import { createPublicClient, http } from "viem";
+import { mainnet, sepolia } from "viem/chains";
+
+export const { TESTNET_ENABLED } = process.env;
+
+export const mainnetWithEns = TESTNET_ENABLED
+  ? addEnsContracts({
+      ...sepolia,
+      network: "sepolia",
+    })
+  : {
+      ...addEnsContracts({
+        ...mainnet,
+        network: "homestead",
+      }),
+      subgraphs: {
+        ens: {
+          url: process.env.SUBGRAPH_URL,
+        },
+      },
+    };
+
+export const publicClient = createPublicClient({
+  chain: mainnetWithEns,
+  transport: http(),
+});
+
+export const reservoirClient = createClient({
+  baseApiUrl: TESTNET_ENABLED ? TESTNET_RELAY_API : MAINNET_RELAY_API,
+  source: "ens.steer.fun",
+  chains: [
+    TESTNET_ENABLED
+      ? convertViemChainToRelayChain(sepolia)
+      : convertViemChainToRelayChain(mainnet),
+  ],
+});

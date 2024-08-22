@@ -91,7 +91,7 @@ const handler = frames(async (ctx) => {
     console.log(JSON.stringify(checkResult));
 
     if (checkResult.status === "success") {
-      kv.set(getKvKey(renewalId), { complete: true, checkResult });
+      kv.set(getKvKey(renewalId), { complete: true, ...steps });
 
       return {
         image: (
@@ -151,7 +151,7 @@ const handler = frames(async (ctx) => {
             action="post"
             target={{
               pathname: "/renew-tx-submitted",
-              query: { name, auto: true },
+              query: { name, auto: true, renewalId },
             }}
           >
             ⟲ Check again

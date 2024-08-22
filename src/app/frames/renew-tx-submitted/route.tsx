@@ -10,6 +10,13 @@ import { Heading } from "../components/Heading";
 type RelayStatusResponse =
   paths["/intents/status"]["get"]["responses"]["200"]["content"]["application/json"];
 
+function draftWarpcastMessage(text: string, embed: string): string {
+  const encodedText = encodeURIComponent(text);
+  const encodedEmbed = encodeURIComponent(embed);
+
+  return `https://warpcast.com/~/compose?text=${encodedText}&embeds[]=${encodedEmbed}`;
+}
+
 const handler = frames(async (ctx) => {
   try {
     const name = ctx.searchParams.name;
@@ -18,6 +25,10 @@ const handler = frames(async (ctx) => {
     if (!ctx.message) {
       throw new Error("No message");
     }
+
+    const message = "I just renewed my ENS name using this frame!";
+    const embed = "https://ens.steer.fun";
+    const draftUrl = draftWarpcastMessage(message, embed);
 
     const isAuto = ctx.searchParams.auto === "true";
 
@@ -41,6 +52,9 @@ const handler = frames(async (ctx) => {
             target={`${mainnetWithEns.blockExplorers.default.url}/tx/${ctx.message?.transactionId}`}
           >
             View Transaction
+          </Button>,
+          <Button action="link" target={draftUrl}>
+            Share
           </Button>,
         ],
       };
@@ -91,6 +105,7 @@ const handler = frames(async (ctx) => {
           <Button action="post" target="/">
             ← Back
           </Button>,
+
           checkResult.inTxHashes?.[0] ? (
             <Button
               action="link"
@@ -107,6 +122,9 @@ const handler = frames(async (ctx) => {
               Mainnet tx
             </Button>
           ) : null,
+          <Button action="link" target={draftUrl}>
+            Share
+          </Button>,
         ],
       };
     } else if (

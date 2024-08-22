@@ -79,11 +79,6 @@ export function formatExpiration(expiryDate: Date): string {
 
 export async function getEthUsdPrice(ether?: number | bigint): Promise<number> {
   // roundId uint80, answer int256, startedAt uint256, updatedAt uint256, answeredInRound uint80
-  const publicClient = createPublicClient({
-    chain: mainnet,
-    transport: http(),
-  });
-
   const [, answer] = await publicClient.readContract({
     abi: [
       {

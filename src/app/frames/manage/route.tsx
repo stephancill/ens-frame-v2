@@ -21,13 +21,36 @@ export const POST = frames(async (ctx) => {
     nameRaw = ctx.message.inputText;
   }
 
+  if (!nameRaw) {
+    return {
+      image: (
+        <Scaffold>
+          <div tw="flex mx-auto">
+            <Heading>Invalid search input</Heading>
+          </div>
+        </Scaffold>
+      ),
+      buttons: [
+        <Button action="post" target="/">
+          ← Back
+        </Button>,
+      ] as [any],
+    };
+  }
+
   let name = getEthTld(nameRaw?.endsWith(".eth") ? nameRaw : `${nameRaw}.eth`);
 
   try {
     name = normalise(name);
   } catch (error) {
     return {
-      image: <div tw="flex">Invalid ENS name</div>,
+      image: (
+        <Scaffold>
+          <div tw="flex mx-auto">
+            <Heading>Invalid ENS name</Heading>
+          </div>
+        </Scaffold>
+      ),
       buttons: [
         <Button action="post" target="/">
           ← Back

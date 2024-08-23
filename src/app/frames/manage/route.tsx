@@ -21,6 +21,8 @@ export const POST = frames(async (ctx) => {
     nameRaw = ctx.message.inputText;
   }
 
+  nameRaw = nameRaw?.trim();
+
   if (!nameRaw) {
     return {
       image: (

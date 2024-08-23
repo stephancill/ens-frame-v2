@@ -14,8 +14,16 @@ export const POST = frames(
       throw new Error("No message");
     }
 
-    const addresses = ctx.message.requesterVerifiedAddresses;
     const username = ctx.message.requesterUserData?.username;
+
+    const walletAddress = await ctx.message.walletAddress();
+    const farcasterAddresses = ctx.message.requesterVerifiedAddresses;
+
+    const addresses = farcasterAddresses
+      ? farcasterAddresses
+      : walletAddress
+      ? [walletAddress]
+      : [];
 
     const ensResults = await Promise.all([
       username?.endsWith(".eth")
@@ -59,7 +67,9 @@ export const POST = frames(
       return {
         image: (
           <Scaffold>
-            <div>No addresses to check</div>
+            <div tw="flex mx-auto">
+              <Heading>No addresses to check, try searching.</Heading>
+            </div>
           </Scaffold>
         ),
         textInput: "Search for an ENS name",
@@ -67,7 +77,7 @@ export const POST = frames(
           <Button action="post" target="/">
             ← Back
           </Button>,
-          <Button action="post" target="/check-names">
+          <Button action="post" target="/manage">
             Search 🔎
           </Button>,
         ],

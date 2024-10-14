@@ -14,7 +14,7 @@ function getEthTld(name: string) {
   return segments.slice(-2).join(".");
 }
 
-export const POST = frames(async (ctx) => {
+const handler = frames(async (ctx) => {
   let nameRaw = ctx.searchParams.name as string | undefined;
 
   if (ctx.message?.inputText) {
@@ -121,3 +121,6 @@ export const POST = frames(async (ctx) => {
     ] as [any, any],
   };
 });
+
+export const POST = handler;
+export const GET = handler;

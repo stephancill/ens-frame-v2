@@ -9,7 +9,6 @@ import { makeRenewTxData } from "../../../lib/ens/makeRenewTxData";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const frameMessage = await getFrameMessage(body, { fetchHubContext: false });
 
   const name = req.nextUrl.searchParams.get("name");
   const years = parseFloat(req.nextUrl.searchParams.get("years")!);
@@ -20,15 +19,15 @@ export async function POST(req: NextRequest) {
     throw new Error("No name");
   }
 
-  if (!frameMessage) {
-    throw new Error("No message");
-  }
-
   if (!renewalId) {
     throw new Error("No renewalId");
   }
 
-  const connectedAddress = frameMessage.address;
+  const connectedAddress = body.untrustedData?.address;
+
+  if (!connectedAddress) {
+    throw new Error("No connected address");
+  }
 
   const durationSeconds = 31536000 * years;
 

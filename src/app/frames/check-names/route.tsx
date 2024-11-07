@@ -53,7 +53,10 @@ export const POST = frames(
       .map((e) => e.names)
       .flat()
       .filter((e) => Boolean(e))
-      .filter((e, i, a) => a.findIndex((x) => x?.name === e?.name) === i)
+      .filter(
+        (e, i, a) =>
+          a.findIndex((x) => x?.name === e?.name) === i && e?.expiryDate
+      )
       .sort(
         (a, b) =>
           (a?.expiryDate?.date.getTime() ?? 0) -
